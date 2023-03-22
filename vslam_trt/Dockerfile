@@ -35,7 +35,9 @@ RUN set -x && \
     wget \
     curl \
     tar \
-    unzip && \
+    unzip \
+    vim \
+    ninja-build && \
   : "g2o dependencies" && \
   apt-get install -y -qq \
     libatlas-base-dev \
@@ -115,13 +117,12 @@ RUN set -x && \
   rm -rf eigen-${EIGEN3_VERSION}.tar.bz2 && \
   cd eigen-${EIGEN3_VERSION} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 ENV Eigen3_DIR=${CMAKE_INSTALL_PREFIX}/share/eigen3/cmake
@@ -134,8 +135,8 @@ RUN set -x && \
   cd g2o && \
   git checkout ${G2O_COMMIT} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
     -DBUILD_SHARED_LIBS=ON \
@@ -146,10 +147,9 @@ RUN set -x && \
     -DG2O_USE_OPENMP=OFF \
     -DG2O_BUILD_APPS=OFF \
     -DG2O_BUILD_EXAMPLES=OFF \
-    -DG2O_BUILD_LINKED_APPS=OFF \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DG2O_BUILD_LINKED_APPS=OFF && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 ENV g2o_DIR=${CMAKE_INSTALL_PREFIX}/lib/cmake/g2o
@@ -162,14 +162,13 @@ RUN set -x && \
   cd gtsam && \
   git checkout ${GTSAM_TAG} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DGTSAM_USE_SYSTEM_EIGEN=ON \
     -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF \
-    -DGTSAM_BUILD_UNSTABLE=OFF \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DGTSAM_BUILD_UNSTABLE=OFF && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 ENV gtsam_DIR=${CMAKE_INSTALL_PREFIX}/lib/cmake/gtsam
@@ -183,8 +182,8 @@ RUN set -x && \
   rm -rf ${OPENCV_VERSION}.zip && \
   cd opencv-${OPENCV_VERSION} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
     -DBUILD_DOCS=OFF \
@@ -203,10 +202,9 @@ RUN set -x && \
     -DWITH_EIGEN=ON \
     -DWITH_FFMPEG=ON \
     -DWITH_TBB=ON \
-    -DWITH_OPENMP=ON \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DWITH_OPENMP=ON && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 ENV OpenCV_DIR=${CMAKE_INSTALL_PREFIX}/lib/cmake/opencv4
@@ -219,8 +217,8 @@ RUN set -x && \
   cd Pangolin && \
   git checkout ${PANGOLIN_COMMIT} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
     -DBUILD_EXAMPLES=OFF \
@@ -240,10 +238,9 @@ RUN set -x && \
     -DBUILD_PANGOLIN_TELICAM=OFF \
     -DBUILD_PANGOLIN_UVC_MEDIAFOUNDATION=OFF \
     -DBUILD_PANGOLIN_V4L=OFF \
-    -DBUILD_PANGOLIN_ZSTD=OFF \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DBUILD_PANGOLIN_ZSTD=OFF && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 ENV Pangolin_DIR=${CMAKE_INSTALL_PREFIX}/lib/cmake/Pangolin
@@ -256,13 +253,12 @@ RUN set -x && \
   cd backward-cpp && \
   git checkout ${BACKWARD_CPP_COMMIT} && \
   mkdir -p build && \
-  cd build && \
-  cmake \
+  cmake -S . -B build \
+    -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
-    .. && \
-  make -j${NUM_THREADS} && \
-  make install && \
+    -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} && \
+  cmake --build build -j${NUM_THREADS} && \
+  cmake --install build && \
   cd /tmp && \
   rm -rf *
 
